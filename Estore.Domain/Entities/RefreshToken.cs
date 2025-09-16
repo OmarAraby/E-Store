@@ -13,5 +13,6 @@
         public bool IsActive => RevokedAt == null && !IsExpired;
 
         public virtual User User { get; set; }
+        public bool IsRevoked { get; set; }
     }
 }
