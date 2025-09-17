@@ -1,3 +1,4 @@
+using Estore.API.Middleware;
 using Estore.Application.DependancyInjection;
 using Estore.Infrastructure.DependancyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -21,6 +22,10 @@ builder.Services.AddIdentityServices(builder.Configuration);
 
 
 var app = builder.Build();
+
+// custom mw
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -45,6 +45,12 @@ namespace Estore.Application.Utiles.Mapping
             CreateMap<ProductImageDto, ProductImage>()
                 .ForMember(dest => dest.Product, opt => opt.Ignore())
                 .ForMember(dest => dest.ProductId, opt => opt.Ignore());
+
+            
+            CreateMap<ProductImageCreateDto, ProductImage>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                .ForMember(dest => dest.ImagePath, opt => opt.MapFrom(src => src.FileUrl))
+                .ForMember(dest => dest.UploadedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
         }
     }
 }

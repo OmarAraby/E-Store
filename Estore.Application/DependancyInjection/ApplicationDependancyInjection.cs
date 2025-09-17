@@ -1,4 +1,7 @@
-﻿using Estore.Application.Utiles.Mapping;
+﻿using Estore.Application.Interfaces;
+using Estore.Application.Services;
+using Estore.Application.Utiles.HandleFiles;
+using Estore.Application.Utiles.Mapping;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,6 +18,13 @@ namespace Estore.Application.DependancyInjection
             services.AddValidatorsFromAssembly(typeof(ApplicationDependancyInjection).Assembly);
 
             // app services
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProductImageService, ProductImageService>();
+            services.AddScoped<IFileService, FileService>();
+
+
+
 
             return services;
         }
