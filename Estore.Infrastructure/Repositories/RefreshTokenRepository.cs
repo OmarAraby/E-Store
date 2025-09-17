@@ -9,6 +9,11 @@ namespace Estore.Infrastructure.Repositories
     {
         private readonly ApplicationDbContext _context;
 
+        public RefreshTokenRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public async Task<RefreshToken?> GetByTokenAsync(string token)
         {
             return await _context.RefreshTokens

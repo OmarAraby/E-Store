@@ -63,6 +63,7 @@ namespace Estore.Application.Services
             {
                 await _unitOfWork.UserRepository.CreateAsync(user, registerDto.Password);
 
+                // if i want to go with auto logiin after register 
                 var accessToken = GenerateAccessToken(user);
                 var refreshToken = await GenerateRefreshTokenAsync(user.Id);
 
