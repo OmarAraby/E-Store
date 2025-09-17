@@ -8,6 +8,18 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+// Add CORS service
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .AllowAnyOrigin()   
+            .AllowAnyMethod()   
+            .AllowAnyHeader();  
+    });
+});
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -37,10 +49,11 @@ if (app.Environment.IsDevelopment())
 
 }
 
+app.UseHttpsRedirection();
 // custom mw
 app.UseMiddleware<GlobalExceptionMiddleware>();
-app.UseHttpsRedirection();
-
+app.UseCors("AllowAll");
+app.UseAuthentication();
 app.UseAuthorization();
 
 #region HandleFiles
