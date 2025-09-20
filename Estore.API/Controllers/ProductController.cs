@@ -2,6 +2,7 @@
 using Estore.Application.DTOS.Product;
 using Estore.Application.Exceptions;
 using Estore.Application.Interfaces;
+using Estore.Domain.Utils;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -120,6 +121,15 @@ namespace Estore.API.Controllers
             {
                 return TypedResults.NotFound(ApiResponse<object>.ErrorResponse(ex.Message));
             }
+        }
+
+
+        // get products with pagination mechnism 
+        [HttpGet("paginated")]
+        public async Task<Ok<ApiResponse<PageList<ProductDto>>>> GetPaginatedProducts([FromQuery]ProductQueryParams queryParams)
+        {
+            var paginatedProducts = await _productService.GetPaginatedAsync(queryParams);
+            return TypedResults.Ok(ApiResponse<PageList<ProductDto>>.SuccessResponse(paginatedProducts, "Products Retrive Successfully"));
         }
     }
 }

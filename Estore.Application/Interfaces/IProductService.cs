@@ -1,9 +1,5 @@
 ﻿using Estore.Application.DTOS.Product;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Estore.Domain.Utils;
 
 namespace Estore.Application.Interfaces
 {
@@ -16,5 +12,8 @@ namespace Estore.Application.Interfaces
         Task<ProductDto> CreateAsync(CreateProductDto createProductDto);
         Task<ProductDto> UpdateAsync(Guid id, UpdateProductDto updateProductDto);
         Task<bool> DeleteAsync(Guid id);
+
+        //  paginated products
+        Task<PageList<ProductDto>> GetPaginatedAsync(ProductQueryParams queryParams);
     }
 }

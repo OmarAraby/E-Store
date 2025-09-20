@@ -1,4 +1,5 @@
 ﻿using Estore.Domain.Entities;
+using Estore.Domain.Utils;
 
 namespace Estore.Domain.Repositories
 {
@@ -12,5 +13,8 @@ namespace Estore.Domain.Repositories
         Task<Product> UpdateAsync(Product product);
         Task DeleteAsync(Guid id);
         Task<bool> ExistsAsync(Guid id);
+
+        // adding paginated method
+        Task<PageList<Product>> GetPaginatedProductAsync(ProductQueryParams queryParams);
     }
 }

@@ -4,6 +4,7 @@ using Estore.Application.Exceptions;
 using Estore.Application.Interfaces;
 using Estore.Domain.Entities;
 using Estore.Domain.Repositories;
+using Estore.Domain.Utils;
 
 namespace Estore.Application.Services
 {
@@ -73,6 +74,15 @@ namespace Estore.Application.Services
                 throw new NotFoundException($"Product with code '{productCode}' not found");
 
             return _mapper.Map<ProductDto>(product);
+        }
+
+        // implement paginated products
+        public async Task<PageList<ProductDto>> GetPaginatedAsync(ProductQueryParams queryParams)
+        {
+            var paginatedProducts = await _unitOfWork.ProductRepository.GetPaginatedProductAsync(queryParams);
+            var mappedProductDtos = _mapper.Map<List<ProductDto>>(paginatedProducts.Items);
+
+           return new PageList<ProductDto>(mappedProductDtos,paginatedProducts.TotalCount, paginatedProducts.PageNumber,paginatedProducts.PageSize);
         }
 
         public async Task<ProductDto> UpdateAsync(Guid id, UpdateProductDto updateProductDto)

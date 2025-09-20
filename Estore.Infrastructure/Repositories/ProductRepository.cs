@@ -1,5 +1,6 @@
 ﻿using Estore.Domain.Entities;
 using Estore.Domain.Repositories;
+using Estore.Domain.Utils;
 using Estore.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -63,6 +64,57 @@ namespace Estore.Infrastructure.Repositories
             return await _context.Products
                 .Include(p => p.ProductImages)
                 .FirstOrDefaultAsync(p => p.ProductCode == productCode);
+        }
+
+
+        // paginated product
+        public async Task<PageList<Product>> GetPaginatedProductAsync(ProductQueryParams queryParams)
+        {
+            var query = _context.Products.Include(p => p.ProductImages).AsQueryable();
+
+            // filter on search
+            if (!string.IsNullOrWhiteSpace(queryParams.SearchTerm))
+            {
+                var term = queryParams.SearchTerm.ToLower();
+                query = query.Where(p => p.Name.ToLower().Contains(term) ||
+                                         p.ProductCode.ToLower().Contains(term));
+            }
+
+            // filter on cat
+            if (!string.IsNullOrWhiteSpace(queryParams.Category))
+            {
+                query = query.Where(p=>p.Category == queryParams.Category);
+            }
+
+            // by price range
+            if (queryParams.MinPrice.HasValue)
+            {
+                query= query.Where(p=>p.Price>=queryParams.MinPrice.Value);
+            }
+            if (queryParams.MaxPrice.HasValue) 
+            {
+                query = query.Where(p=>p.Price<=queryParams.MaxPrice.Value);
+            }
+
+            // sorting
+            query = queryParams.SortBy?.ToLower() switch
+            {
+                "name" => queryParams.SortDescending ? query.OrderByDescending(p => p.Name) : query.OrderBy(p => p.Name),
+                "price" => queryParams.SortDescending ? query.OrderByDescending(p => p.Price) : query.OrderBy(p => p.Price),
+                _ => queryParams.SortDescending ? query.OrderByDescending(p => p.CreatedAt) : query.OrderBy(p => p.CreatedAt),
+            };
+
+            // get total count  
+            var totalCount = await query.CountAsync();
+
+            // apply pagination 
+            var items = await query
+                .Skip((queryParams.PageNumber - 1) * queryParams.PageSize)
+                .Take(queryParams.PageSize)
+                .ToListAsync();
+
+            return new PageList<Product>(items, totalCount, queryParams.PageNumber, queryParams.PageSize);
+
         }
 
         public async Task<Product> UpdateAsync(Product product)
